@@ -33,7 +33,6 @@
             <checksum>805bcd71c1a12d4f86769367275f51b7ba39caa0ba226b6d359d0baa72e29ffd</checksum>
             <checksum_type>sha256</checksum_type>
         </os>
-        </os>
     </category>
     <category name="Fedora Kinoite">
         <os>
@@ -47,7 +46,6 @@
             <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/aarch64/iso/Fedora-Kinoite-ostree-aarch64-42-1.1.iso</url>
             <checksum>31fd7c29778985816c2286711560a6790e7139f5645df2f4e0272fe2f27e4845</checksum>
             <checksum_type>sha256</checksum_type>
-        </os>
         </os>
     </category>
 </oslist>
