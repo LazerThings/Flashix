@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import os
 import hashlib
 import time
+import platform
 from pathlib import Path
 
 class Flashix:
@@ -16,6 +17,15 @@ class Flashix:
         self.root.title("Flashix - USB ISO Flasher")
         self.root.geometry("700x600")
         self.root.resizable(False, False)
+        
+        # Detect operating system
+        self.os_type = platform.system()  # 'Linux' or 'Darwin' (macOS)
+        
+        if self.os_type not in ['Linux', 'Darwin']:
+            messagebox.showerror("Unsupported OS", 
+                               f"Flashix only supports Linux and macOS.\nDetected: {self.os_type}")
+            root.quit()
+            return
         
         self.os_list_url = "https://raw.githubusercontent.com/LazerThings/Flashix/refs/heads/main/os-list.xml"
         self.os_data = {}  # Changed to dict: {category: [versions]}
@@ -212,16 +222,45 @@ class Flashix:
         
     def detect_drives(self):
         try:
-            result = subprocess.run(['lsblk', '-d', '-n', '-o', 'NAME,SIZE,TYPE'], 
-                                  capture_output=True, text=True)
             drives = []
-            for line in result.stdout.strip().split('\n'):
-                parts = line.split()
-                if len(parts) >= 3 and parts[2] == 'disk':
-                    name = parts[0]
-                    size = parts[1]
-                    # Filter out likely system drives (very large ones)
-                    drives.append(f"/dev/{name} ({size})")
+            
+            if self.os_type == 'Linux':
+                # Linux: use lsblk
+                result = subprocess.run(['lsblk', '-d', '-n', '-o', 'NAME,SIZE,TYPE'], 
+                                      capture_output=True, text=True)
+                for line in result.stdout.strip().split('\n'):
+                    parts = line.split()
+                    if len(parts) >= 3 and parts[2] == 'disk':
+                        name = parts[0]
+                        size = parts[1]
+                        drives.append(f"/dev/{name} ({size})")
+            
+            elif self.os_type == 'Darwin':
+                # macOS: use diskutil
+                result = subprocess.run(['diskutil', 'list', '-plist'], 
+                                      capture_output=True, text=True)
+                
+                # Parse diskutil output to find external disks
+                result2 = subprocess.run(['diskutil', 'list'], 
+                                       capture_output=True, text=True)
+                
+                # Look for external disks
+                for line in result2.stdout.split('\n'):
+                    if '/dev/disk' in line and 'external' in line.lower():
+                        parts = line.split()
+                        if parts:
+                            disk_name = parts[0]
+                            # Get size info
+                            size_result = subprocess.run(['diskutil', 'info', disk_name],
+                                                       capture_output=True, text=True)
+                            size = "Unknown"
+                            for size_line in size_result.stdout.split('\n'):
+                                if 'Disk Size' in size_line or 'Total Size' in size_line:
+                                    size_parts = size_line.split(':')
+                                    if len(size_parts) > 1:
+                                        size = size_parts[1].strip().split('(')[0].strip()
+                                        break
+                            drives.append(f"{disk_name} ({size})")
             
             if drives:
                 self.drive_combo['values'] = drives
@@ -232,6 +271,7 @@ class Flashix:
                 self.log("No USB drives detected")
         except Exception as e:
             self.log(f"Error detecting drives: {e}")
+            messagebox.showerror("Error", f"Failed to detect drives:\n{e}")
             
     def refresh_os_list(self):
         def fetch():
@@ -376,14 +416,32 @@ class Flashix:
             self.log(f"Flashing to {drive}...")
             self.log("This may take several minutes...")
             
+            # Unmount the drive first on macOS
+            if self.os_type == 'Darwin':
+                self.log(f"Unmounting {drive}...")
+                unmount_cmd = ['sudo', '-S', 'diskutil', 'unmountDisk', drive]
+                unmount_process = subprocess.Popen(
+                    unmount_cmd,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True
+                )
+                unmount_process.stdin.write(f"{self.sudo_password}\n")
+                unmount_process.stdin.flush()
+                unmount_process.wait()
+            
             dd_command = [
                 'sudo', '-S', 'dd',
                 f'if={iso_path}',
                 f'of={drive}',
-                'bs=4M',
-                'status=progress',
+                'bs=4m' if self.os_type == 'Darwin' else 'bs=4M',  # macOS uses lowercase 'm'
                 'conv=fsync'
             ]
+            
+            # Add status=progress for Linux only (not available on macOS)
+            if self.os_type == 'Linux':
+                dd_command.insert(-1, 'status=progress')
             
             process = subprocess.Popen(
                 dd_command,
