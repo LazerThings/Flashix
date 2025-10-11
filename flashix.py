@@ -15,7 +15,7 @@ class Flashix:
     def __init__(self, root):
         self.root = root
         self.root.title("Flashix - USB ISO Flasher")
-        self.root.geometry("700x600")
+        self.root.geometry("700x900")
         self.root.resizable(False, False)
         
         # Detect operating system
