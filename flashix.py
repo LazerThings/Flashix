@@ -17,8 +17,9 @@ class Flashix:
         self.root.geometry("700x600")
         self.root.resizable(False, False)
         
-        self.os_list_url = "https://raw.githubusercontent.com/LazerThings/Flashix/refs/heads/main/os-list.xml"
-        self.os_data = []
+        self.os_list_url = "https://raw.githubusercontent.com/YOUR_USERNAME/flashix-os-list/main/os-list.xml"
+        self.os_data = {}  # Changed to dict: {category: [versions]}
+        self.os_details = {}  # Maps (category, version) to {url, checksum, etc}
         self.list_version = "0.0"
         self.sudo_password = None
         self.is_flashing = False
@@ -77,10 +78,20 @@ class Flashix:
                                 padx=10, pady=10)
         os_frame.pack(fill=tk.X, pady=(0, 10))
         
-        self.os_var = tk.StringVar()
-        self.os_combo = ttk.Combobox(os_frame, textvariable=self.os_var, 
-                                     state="readonly", width=60)
-        self.os_combo.pack(fill=tk.X)
+        # Category/OS dropdown
+        tk.Label(os_frame, text="Category / OS:", font=("Arial", 9)).pack(anchor=tk.W, pady=(0, 2))
+        self.category_var = tk.StringVar()
+        self.category_combo = ttk.Combobox(os_frame, textvariable=self.category_var, 
+                                          state="readonly", width=58)
+        self.category_combo.pack(fill=tk.X, pady=(0, 10))
+        self.category_combo.bind('<<ComboboxSelected>>', self.on_category_selected)
+        
+        # Version dropdown
+        tk.Label(os_frame, text="Version:", font=("Arial", 9)).pack(anchor=tk.W, pady=(0, 2))
+        self.version_var = tk.StringVar()
+        self.version_combo = ttk.Combobox(os_frame, textvariable=self.version_var, 
+                                         state="readonly", width=58)
+        self.version_combo.pack(fill=tk.X)
         
         # Options
         options_frame = tk.LabelFrame(main_frame, text="Options", font=("Arial", 10, "bold"), 
@@ -188,6 +199,16 @@ class Flashix:
         password_entry.bind('<Return>', lambda e: submit())
         
         dialog.wait_window()
+    
+    def on_category_selected(self, event=None):
+        category = self.category_var.get()
+        if category and category in self.os_data:
+            versions = self.os_data[category]
+            self.version_combo['values'] = versions
+            if versions:
+                self.version_combo.current(0)
+        else:
+            self.version_combo['values'] = []
         
     def detect_drives(self):
         try:
@@ -222,25 +243,41 @@ class Flashix:
                 root = ET.fromstring(response.content)
                 version = root.get('version', '0.0')
                 
-                os_list = []
-                for os_elem in root.findall('os'):
-                    os_list.append({
-                        'name': os_elem.find('name').text,
-                        'url': os_elem.find('url').text,
-                        'checksum': os_elem.find('checksum').text if os_elem.find('checksum') is not None else None,
-                        'checksum_type': os_elem.find('checksum_type').text if os_elem.find('checksum_type') is not None else 'sha256'
-                    })
+                # Parse categories and versions
+                os_dict = {}
+                details = {}
                 
-                self.os_data = os_list
+                for category_elem in root.findall('category'):
+                    category_name = category_elem.get('name')
+                    versions = []
+                    
+                    for os_elem in category_elem.findall('os'):
+                        version_name = os_elem.find('version').text
+                        versions.append(version_name)
+                        
+                        # Store details for this category/version combination
+                        key = (category_name, version_name)
+                        details[key] = {
+                            'url': os_elem.find('url').text,
+                            'checksum': os_elem.find('checksum').text if os_elem.find('checksum') is not None else None,
+                            'checksum_type': os_elem.find('checksum_type').text if os_elem.find('checksum_type') is not None else 'sha256'
+                        }
+                    
+                    os_dict[category_name] = versions
+                
+                self.os_data = os_dict
+                self.os_details = details
                 self.list_version = version
                 
-                os_names = [os['name'] for os in os_list]
-                self.os_combo['values'] = os_names
-                if os_names:
-                    self.os_combo.current(0)
+                categories = list(os_dict.keys())
+                self.category_combo['values'] = categories
+                if categories:
+                    self.category_combo.current(0)
+                    self.on_category_selected()
                 
                 self.version_label.config(text=f"List version: {version}")
-                self.log(f"Loaded {len(os_list)} OS options (version {version})")
+                total_os = sum(len(versions) for versions in os_dict.values())
+                self.log(f"Loaded {len(categories)} categories, {total_os} OS options (version {version})")
             except Exception as e:
                 self.log(f"Error fetching OS list: {e}")
                 messagebox.showerror("Error", f"Failed to fetch OS list:\n{e}")
@@ -256,16 +293,23 @@ class Flashix:
             messagebox.showerror("Error", "Please select a USB drive")
             return
             
-        if not self.os_var.get():
-            messagebox.showerror("Error", "Please select an operating system")
+        if not self.category_var.get():
+            messagebox.showerror("Error", "Please select a category/OS")
+            return
+            
+        if not self.version_var.get():
+            messagebox.showerror("Error", "Please select a version")
             return
         
         drive = self.drive_var.get().split()[0]  # Extract /dev/sdX
+        category = self.category_var.get()
+        version = self.version_var.get()
         
         confirm = messagebox.askyesno(
             "Confirm Flash",
             f"WARNING: All data on {drive} will be erased!\n\n"
-            f"OS: {self.os_var.get()}\n"
+            f"OS: {category}\n"
+            f"Version: {version}\n"
             f"Drive: {drive}\n\n"
             "Are you sure you want to continue?"
         )
@@ -277,13 +321,13 @@ class Flashix:
         self.flash_btn.config(state=tk.DISABLED)
         self.progress_bar.start()
         
-        threading.Thread(target=self.flash_process, args=(drive,), daemon=True).start()
+        threading.Thread(target=self.flash_process, args=(drive, category, version), daemon=True).start()
         
-    def flash_process(self, drive):
+    def flash_process(self, drive, category, version):
         try:
-            # Find selected OS data
-            os_name = self.os_var.get()
-            os_info = next((os for os in self.os_data if os['name'] == os_name), None)
+            # Get OS details for this category/version
+            key = (category, version)
+            os_info = self.os_details.get(key)
             
             if not os_info:
                 raise Exception("OS information not found")
@@ -292,7 +336,7 @@ class Flashix:
             iso_filename = os_info['url'].split('/')[-1]
             iso_path = self.download_path / iso_filename
             
-            self.log(f"Downloading {os_name}...")
+            self.log(f"Downloading {category} - {version}...")
             self.log(f"URL: {os_info['url']}")
             
             response = requests.get(os_info['url'], stream=True)
@@ -375,7 +419,7 @@ class Flashix:
             self.log("=" * 50)
             self.log("SUCCESS! USB drive is ready to use.")
             
-            messagebox.showinfo("Success", f"{os_name} has been successfully flashed to {drive}!")
+            messagebox.showinfo("Success", f"{category} - {version} has been successfully flashed to {drive}!")
             
         except Exception as e:
             self.log(f"ERROR: {e}")

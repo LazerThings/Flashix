@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <oslist version="1.0">
-    <os>
-        <n>Ubuntu 24.04 LTS (Desktop)</name>
-        <url>https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso</url>
-        <checksum>81fae9cc21e2b1e3a9a4526c7d0b9c6e7db1c0a8e9f8c7d6e5f4a3b2c1d0e9f8</checksum>
-        <checksum_type>sha256</checksum_type>
-    </os>
+    
+    <category name="Ubuntu Desktop">
+        <os>
+            <version>Noble Numbat - 24.04.1 LTS AMD64</version>
+            <url>https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-desktop-amd64.iso</url>
+            <checksum>c2e6f4dc37ac944e2ed507f87c6188dd4d3179bf4a3f9e110d3c88d1e42e8a2d</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Jammy Jellyfish - 22.04.3 LTS AMD64</version>
+            <url>https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-desktop-amd64.iso</url>
+            <checksum>a435f6f393dda581172490eda9f683c32e495158a780b5a1de422ee77d98e909</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
 </oslist>
