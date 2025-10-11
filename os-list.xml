@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oslist version="1.0">
+    <os>
+        <n>Ubuntu 24.04 LTS (Desktop)</name>
+        <url>https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso</url>
+        <checksum>81fae9cc21e2b1e3a9a4526c7d0b9c6e7db1c0a8e9f8c7d6e5f4a3b2c1d0e9f8</checksum>
+        <checksum_type>sha256</checksum_type>
+    </os>
+</oslist>
