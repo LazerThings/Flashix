@@ -17,7 +17,7 @@ class Flashix:
         self.root.geometry("700x600")
         self.root.resizable(False, False)
         
-        self.os_list_url = "https://raw.githubusercontent.com/YOUR_USERNAME/flashix-os-list/main/os-list.xml"
+        self.os_list_url = "https://raw.githubusercontent.com/LazerThings/Flashix/refs/heads/main/os-list.xml"
         self.os_data = []
         self.list_version = "0.0"
         self.sudo_password = None
