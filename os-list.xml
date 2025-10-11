@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.0">
+<oslist version="1.0.1">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
