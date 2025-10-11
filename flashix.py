@@ -31,13 +31,12 @@ class Flashix:
         self.os_data = {}  # Changed to dict: {category: [versions]}
         self.os_details = {}  # Maps (category, version) to {url, checksum, etc}
         self.list_version = "0.0"
-        self.sudo_password = None
         self.is_flashing = False
         self.download_path = Path.home() / ".flashix_downloads"
         self.download_path.mkdir(exist_ok=True)
         
         self.setup_ui()
-        self.get_sudo_password()
+        # No password prompt needed - will use system auth when needed
         
     def setup_ui(self):
         # Title
@@ -64,7 +63,7 @@ class Flashix:
         self.version_label.pack(side=tk.LEFT)
         
         refresh_btn = tk.Button(list_info_frame, text="Refresh List", command=self.refresh_os_list,
-                               bg="#3498db", fg="white", relief=tk.FLAT, padx=10)
+                               bg="#3498db", fg="white", relief=tk.FLAT, padx=10, cursor="hand2")
         refresh_btn.pack(side=tk.RIGHT)
         
         # USB Drive selection
@@ -80,7 +79,7 @@ class Flashix:
         self.drive_combo.pack(side=tk.LEFT, padx=(0, 10))
         
         detect_btn = tk.Button(drive_select_frame, text="Detect Drives", command=self.detect_drives,
-                              bg="#2ecc71", fg="white", relief=tk.FLAT, padx=10)
+                              bg="#2ecc71", fg="white", relief=tk.FLAT, padx=10, cursor="hand2")
         detect_btn.pack(side=tk.LEFT)
         
         # OS selection
@@ -131,7 +130,7 @@ class Flashix:
         # Flash button
         self.flash_btn = tk.Button(main_frame, text="FLASH", command=self.start_flash,
                                    bg="#e74c3c", fg="white", font=("Arial", 14, "bold"), 
-                                   relief=tk.FLAT, height=2)
+                                   relief=tk.FLAT, height=2, cursor="hand2")
         self.flash_btn.pack(fill=tk.X)
         
         # Initial actions
@@ -139,78 +138,6 @@ class Flashix:
         self.refresh_os_list()
         
     def log(self, message):
-        self.log_text.config(state=tk.NORMAL)
-        self.log_text.insert(tk.END, f"[{time.strftime('%H:%M:%S')}] {message}\n")
-        self.log_text.see(tk.END)
-        self.log_text.config(state=tk.DISABLED)
-        
-    def get_sudo_password(self):
-        dialog = tk.Toplevel(self.root)
-        dialog.title("Sudo Password Required")
-        dialog.geometry("400x150")
-        dialog.resizable(False, False)
-        dialog.transient(self.root)
-        dialog.grab_set()
-        
-        # Center the dialog
-        dialog.update_idletasks()
-        x = (dialog.winfo_screenwidth() // 2) - (dialog.winfo_width() // 2)
-        y = (dialog.winfo_screenheight() // 2) - (dialog.winfo_height() // 2)
-        dialog.geometry(f"+{x}+{y}")
-        
-        frame = tk.Frame(dialog, padx=20, pady=20)
-        frame.pack(fill=tk.BOTH, expand=True)
-        
-        tk.Label(frame, text="Flashix requires sudo privileges to flash USB drives.", 
-                font=("Arial", 10)).pack(pady=(0, 10))
-        tk.Label(frame, text="Please enter your password:", 
-                font=("Arial", 9)).pack(anchor=tk.W)
-        
-        password_var = tk.StringVar()
-        password_entry = tk.Entry(frame, textvariable=password_var, show="*", width=40)
-        password_entry.pack(fill=tk.X, pady=(5, 15))
-        password_entry.focus()
-        
-        def submit():
-            pwd = password_var.get()
-            if not pwd:
-                messagebox.showerror("Error", "Password cannot be empty")
-                return
-            
-            # Test sudo password
-            try:
-                result = subprocess.run(
-                    ['sudo', '-S', 'echo', 'test'],
-                    input=f"{pwd}\n",
-                    capture_output=True,
-                    text=True,
-                    timeout=5
-                )
-                if result.returncode == 0:
-                    self.sudo_password = pwd
-                    dialog.destroy()
-                else:
-                    messagebox.showerror("Error", "Incorrect password")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to verify password: {e}")
-        
-        def cancel():
-            messagebox.showwarning("Warning", "Sudo password is required. Exiting.")
-            self.root.quit()
-        
-        btn_frame = tk.Frame(frame)
-        btn_frame.pack()
-        
-        tk.Button(btn_frame, text="Submit", command=submit, bg="#2ecc71", fg="white", 
-                 relief=tk.FLAT, padx=20).pack(side=tk.LEFT, padx=5)
-        tk.Button(btn_frame, text="Cancel", command=cancel, bg="#95a5a6", fg="white", 
-                 relief=tk.FLAT, padx=20).pack(side=tk.LEFT, padx=5)
-        
-        password_entry.bind('<Return>', lambda e: submit())
-        
-        dialog.wait_window()
-    
-    def on_category_selected(self, event=None):
         category = self.category_var.get()
         if category and category in self.os_data:
             versions = self.os_data[category]
@@ -372,88 +299,81 @@ class Flashix:
             if not os_info:
                 raise Exception("OS information not found")
             
-            # Download ISO
             iso_filename = os_info['url'].split('/')[-1]
             iso_path = self.download_path / iso_filename
             
-            self.log(f"Downloading {category} - {version}...")
-            self.log(f"URL: {os_info['url']}")
+            # CREATE THE COMPLETE SCRIPT THAT DOES EVERYTHING
+            self.log("Preparing flash script...")
+            script_path = self.download_path / 'flashix_complete.sh'
             
-            response = requests.get(os_info['url'], stream=True)
-            response.raise_for_status()
-            
-            total_size = int(response.headers.get('content-length', 0))
-            downloaded = 0
-            
-            with open(iso_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-                        downloaded += len(chunk)
-                        if total_size > 0:
-                            percent = (downloaded / total_size) * 100
-                            self.log(f"Progress: {percent:.1f}% ({downloaded // (1024*1024)}MB / {total_size // (1024*1024)}MB)")
-            
-            self.log(f"Download complete: {iso_path}")
-            
-            # Verify checksum if requested
-            if self.verify_var.get() and os_info.get('checksum'):
-                self.log(f"Verifying {os_info['checksum_type']} checksum...")
-                hash_func = hashlib.new(os_info['checksum_type'])
-                with open(iso_path, 'rb') as f:
-                    for chunk in iter(lambda: f.read(8192), b''):
-                        hash_func.update(chunk)
+            with open(script_path, 'w') as f:
+                f.write('#!/bin/bash\n')
+                f.write('set -e\n\n')
                 
-                calculated = hash_func.hexdigest()
-                expected = os_info['checksum'].lower()
+                # Download
+                f.write(f'echo "Downloading {category} - {version}..."\n')
+                f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
+                f.write('echo "Download complete"\n\n')
                 
-                if calculated != expected:
-                    raise Exception(f"Checksum mismatch!\nExpected: {expected}\nGot: {calculated}")
+                # Checksum verification if needed
+                if self.verify_var.get() and os_info.get('checksum'):
+                    f.write(f'echo "Verifying checksum..."\n')
+                    checksum_type = os_info['checksum_type']
+                    expected = os_info['checksum']
+                    
+                    if checksum_type == 'sha256':
+                        hash_cmd = 'shasum -a 256' if self.os_type == 'Darwin' else 'sha256sum'
+                    elif checksum_type == 'sha1':
+                        hash_cmd = 'shasum -a 1' if self.os_type == 'Darwin' else 'sha1sum'
+                    elif checksum_type == 'md5':
+                        hash_cmd = 'md5' if self.os_type == 'Darwin' else 'md5sum'
+                    else:
+                        hash_cmd = f'{checksum_type}sum'
+                    
+                    f.write(f'CHECKSUM=$({hash_cmd} "{iso_path}" | awk \'{{print $1}}\')\n')
+                    f.write(f'if [ "$CHECKSUM" != "{expected}" ]; then\n')
+                    f.write(f'    echo "Checksum mismatch!"\n')
+                    f.write(f'    exit 1\n')
+                    f.write(f'fi\n')
+                    f.write('echo "Checksum verified"\n\n')
                 
-                self.log("Checksum verified ✓")
+                # Flash
+                if self.os_type == 'Darwin':
+                    f.write(f'echo "Unmounting {drive}..."\n')
+                    f.write(f'diskutil unmountDisk {drive}\n')
+                    f.write(f'echo "Flashing to {drive}..."\n')
+                    f.write(f'dd if="{iso_path}" of={drive} bs=4m conv=fsync\n')
+                else:
+                    f.write(f'echo "Flashing to {drive}..."\n')
+                    f.write(f'dd if="{iso_path}" of={drive} bs=4M status=progress conv=fsync\n')
+                
+                # Cleanup if requested
+                if self.delete_iso_var.get():
+                    f.write(f'\necho "Cleaning up..."\n')
+                    f.write(f'rm -f "{iso_path}"\n')
+                
+                f.write('\necho "Complete!"\n')
             
-            # Flash to USB
-            self.log(f"Flashing to {drive}...")
-            self.log("This may take several minutes...")
+            # Make script executable
+            os.chmod(script_path, 0o755)
             
-            # Unmount the drive first on macOS
+            # AUTHENTICATE AND RUN - ONE PROMPT RIGHT NOW
+            self.log("System authentication required...")
+            self.log("Please authenticate to begin download and flash process")
+            self.log("")
+            
             if self.os_type == 'Darwin':
-                self.log(f"Unmounting {drive}...")
-                unmount_cmd = ['sudo', '-S', 'diskutil', 'unmountDisk', drive]
-                unmount_process = subprocess.Popen(
-                    unmount_cmd,
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    text=True
-                )
-                unmount_process.stdin.write(f"{self.sudo_password}\n")
-                unmount_process.stdin.flush()
-                unmount_process.wait()
+                cmd = ['osascript', '-e', f'do shell script "{script_path}" with prompt "Flashix needs administrator permission to flash USB drives." with administrator privileges']
+            else:
+                cmd = ['pkexec', str(script_path)]
             
-            dd_command = [
-                'sudo', '-S', 'dd',
-                f'if={iso_path}',
-                f'of={drive}',
-                'bs=4m' if self.os_type == 'Darwin' else 'bs=4M',  # macOS uses lowercase 'm'
-                'conv=fsync'
-            ]
-            
-            # Add status=progress for Linux only (not available on macOS)
-            if self.os_type == 'Linux':
-                dd_command.insert(-1, 'status=progress')
-            
+            # Run the authenticated script that does EVERYTHING
             process = subprocess.Popen(
-                dd_command,
-                stdin=subprocess.PIPE,
+                cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True
             )
-            
-            # Send password
-            process.stdin.write(f"{self.sudo_password}\n")
-            process.stdin.flush()
             
             # Read output
             for line in process.stdout:
@@ -462,20 +382,14 @@ class Flashix:
             process.wait()
             
             if process.returncode != 0:
-                raise Exception(f"Flashing failed with return code {process.returncode}")
-            
-            self.log("Flashing complete ✓")
-            
-            # Delete ISO if requested
-            if self.delete_iso_var.get():
-                self.log(f"Deleting {iso_filename}...")
-                iso_path.unlink()
-                self.log("ISO deleted ✓")
-            else:
-                self.log(f"ISO saved at: {iso_path}")
+                raise Exception(f"Process failed with return code {process.returncode}")
             
             self.log("=" * 50)
             self.log("SUCCESS! USB drive is ready to use.")
+            
+            # Cleanup script
+            if script_path.exists():
+                script_path.unlink()
             
             messagebox.showinfo("Success", f"{category} - {version} has been successfully flashed to {drive}!")
             

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.2">
+<oslist version="1.4">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
@@ -45,6 +45,20 @@
             <version>42 ARM64</version>
             <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/aarch64/iso/Fedora-Kinoite-ostree-aarch64-42-1.1.iso</url>
             <checksum>31fd7c29778985816c2286711560a6790e7139f5645df2f4e0272fe2f27e4845</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Fedora Workstation (GNOME)">
+        <os>
+            <version>42 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso</url>
+            <checksum>98958d80e8a80eabe61275337f969c8e2212adc3a223d9bbdab9411bb1c95cba</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>42 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/aarch64/iso/Fedora-Workstation-Live-42-1.1.aarch64.iso</url>
+            <checksum>954a0d7d6553fdf2b6bcf7f393a2e41f9265a0a81de8c8e4f712f5924e40577f</checksum>
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
