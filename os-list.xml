@@ -1,18 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <oslist version="1.0">
-    
     <category name="Ubuntu Desktop">
         <os>
-            <version>Noble Numbat - 24.04.1 LTS AMD64</version>
-            <url>https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-desktop-amd64.iso</url>
-            <checksum>c2e6f4dc37ac944e2ed507f87c6188dd4d3179bf4a3f9e110d3c88d1e42e8a2d</checksum>
+            <version>Noble Numbat - 24.04.3 LTS AMD64</version>
+            <url>https://releases.ubuntu.com/noble/ubuntu-24.04.3-desktop-amd64.iso</url>
+            <checksum>faabcf33ae53976d2b8207a001ff32f4e5daae013505ac7188c9ea63988f8328</checksum>
             <checksum_type>sha256</checksum_type>
         </os>
         <os>
-            <version>Jammy Jellyfish - 22.04.3 LTS AMD64</version>
-            <url>https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-desktop-amd64.iso</url>
-            <checksum>a435f6f393dda581172490eda9f683c32e495158a780b5a1de422ee77d98e909</checksum>
+            <version>Plucky Puffin - 25.04 Interim AMD64</version>
+            <url>https://releases.ubuntu.com/plucky/ubuntu-25.04-desktop-amd64.iso</url>
+            <checksum>b87366b62eddfbecb60e681ba83299c61884a0d97569abe797695c8861f5dea4</checksum>
             <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Questing Quokka - 25.10 Interim AMD64</version>
+            <url>https://releases.ubuntu.com/questing/ubuntu-25.10-desktop-amd64.iso</url>
+            <checksum>32e30d72ae4798c633323a2684d94a11582bb03a6ab38d2b0d5ae5eabc5e577b</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Fedora KDE Plasma">
+        <os>
+            <version>42 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/KDE/x86_64/iso/Fedora-KDE-Desktop-Live-42-1.1.x86_64.iso</url>
+            <checksum>cf4beecc21ffae86d0e368797cbcc02ba7f4c6549c626db01b1d3f4e1444da85</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>42 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/KDE/aarch64/iso/Fedora-KDE-Desktop-Live-42-1.1.aarch64.iso</url>
+            <checksum>805bcd71c1a12d4f86769367275f51b7ba39caa0ba226b6d359d0baa72e29ffd</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        </os>
+    </category>
+    <category name="Fedora Kinoite">
+        <os>
+            <version>42 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/x86_64/iso/Fedora-Kinoite-ostree-x86_64-42-1.1.iso</url>
+            <checksum>52bdfbd4587b79dfbd1442aed9f49f8bc4589ba3d488b8c7bd46a733571b09d2</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>42 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/aarch64/iso/Fedora-Kinoite-ostree-aarch64-42-1.1.iso</url>
+            <checksum>31fd7c29778985816c2286711560a6790e7139f5645df2f4e0272fe2f27e4845</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
         </os>
     </category>
 </oslist>
