@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.0.1">
+<oslist version="1.2">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
@@ -45,6 +45,26 @@
             <version>42 ARM64</version>
             <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/aarch64/iso/Fedora-Kinoite-ostree-aarch64-42-1.1.iso</url>
             <checksum>31fd7c29778985816c2286711560a6790e7139f5645df2f4e0272fe2f27e4845</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Linux Mint">
+        <os>
+            <version>Zara 22.2 Cinnamon</version>
+            <url>https://mirrors.kernel.org/linuxmint/stable/22.2/linuxmint-22.2-cinnamon-64bit.iso</url>
+            <checksum>759c9b5a2ad26eb9844b24f7da1696c705ff5fe07924a749f385f435176c2306</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Zara 22.2 Xfce</version>
+            <url>https://mirrors.kernel.org/linuxmint/stable/22.2/linuxmint-22.2-xfce-64bit.iso</url>
+            <checksum>dea13e523dca28e3aa48d90167a6368c63e1b3251492115417fdbf648551558f</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Zara 22.2 MATE</version>
+            <url>https://mirrors.kernel.org/linuxmint/stable/22.2/linuxmint-22.2-mate-64bit.iso</url>
+            <checksum>21f5a5f7be652c60b20ba7996328098b14e979b1ef8bf7f6c9d4a2a579504a65</checksum>
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
