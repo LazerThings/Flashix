@@ -17,7 +17,7 @@ class Flashix:
         self.root.geometry("700x600")
         self.root.resizable(False, False)
         
-        self.os_list_url = "https://raw.githubusercontent.com/YOUR_USERNAME/flashix-os-list/main/os-list.xml"
+        self.os_list_url = "https://raw.githubusercontent.com/LazerThings/Flashix/refs/heads/main/os-list.xml"
         self.os_data = {}  # Changed to dict: {category: [versions]}
         self.os_details = {}  # Maps (category, version) to {url, checksum, etc}
         self.list_version = "0.0"
