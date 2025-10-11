@@ -82,4 +82,38 @@
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
+    <category name="Elementary OS">
+        <os>
+            <version>8.0.2</version>
+            <url>https://nyc3.dl.elementary.io/download/MTc2MDIwMjQ2MA==/elementaryos-8.0-stable-amd64.20250902rc.iso</url>
+            <checksum>c0ee5f9c1fa27a42fe864a6360ca17b3b40504f258ade3e4cfe7b17d94f8acc6</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Solus OS">
+        <os>
+            <version>2025-1-26 Budgie</version>
+            <url>https://downloads.getsol.us/isos/2025-01-26/Solus-Budgie-Release-2025-01-26.iso</url>
+            <checksum>4e2d664b6821b8d358c67967be1bfd71b222bf0e748f224c794f3f2a7b96c266</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>2025-1-26 GNOME</version>
+            <url>https://downloads.getsol.us/isos/2025-01-26/Solus-GNOME-Release-2025-01-26.iso</url>
+            <checksum>e7f067cec3bee1e54c8117c0a6bc6058a442ac8554a3abbcc7f09bb12863d0ed</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>2025-1-26 Plasma</version>
+            <url>https://downloads.getsol.us/isos/2025-01-26/Solus-Plasma-Release-2025-01-26.iso</url>
+            <checksum>462dcd9d07504414e73b2952b203afe029894ea5cbc1c7262554389ae7b9258c</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>2025-1-26 XFCE-Beta</version>
+            <url>https://downloads.getsol.us/isos/2025-01-26/Solus-XFCE-Beta-Release-2025-01-26.iso</url>
+            <checksum>ee1a2b8abb79956eb6b41e4794e34d2ffc8c6bf7af53ee92ac962dd8e60f9e2b</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
 </oslist>
