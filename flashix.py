@@ -10,7 +10,7 @@ import sys
 import platform
 from pathlib import Path
 
-FLASHIX_VERSION = "1.6"
+FLASHIX_VERSION = "1.6 Kings Canyon"
 
 class Flashix:
     def __init__(self, root, multiboot_mode=False):
