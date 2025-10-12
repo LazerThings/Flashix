@@ -10,7 +10,7 @@ import sys
 import platform
 from pathlib import Path
 
-FLASHIX_VERSION = "1.6.1"
+FLASHIX_VERSION = "1.8 Rio Grande"
 
 class Flashix:
     def __init__(self, root, multiboot_mode=False):
@@ -121,6 +121,11 @@ class Flashix:
                                      padx=10, pady=10)
         options_frame.pack(fill=tk.X, pady=(0, 10))
         
+        self.use_torrent_var = tk.BooleanVar(value=True)
+        self.use_torrent_checkbox = tk.Checkbutton(options_frame, text="Use torrent download (faster)", 
+                      variable=self.use_torrent_var, font=("Arial", 9))
+        self.use_torrent_checkbox.pack(anchor=tk.W)
+        
         self.delete_iso_var = tk.BooleanVar(value=True)
         self.delete_iso_checkbox = tk.Checkbutton(options_frame, text="Delete ISO after flashing", 
                       variable=self.delete_iso_var, font=("Arial", 9))
@@ -216,6 +221,23 @@ class Flashix:
                                          state="readonly", width=58)
         self.version_combo.pack(fill=tk.X, pady=(0, 5))
         
+        # Options subsection
+        tk.Label(add_frame, text="Options:", font=("Arial", 9, "bold")).pack(anchor=tk.W, pady=(10, 2))
+        
+        self.use_torrent_var = tk.BooleanVar(value=True)
+        self.use_torrent_checkbox = tk.Checkbutton(add_frame, text="Use torrent download (faster)", 
+                      variable=self.use_torrent_var, font=("Arial", 9))
+        self.use_torrent_checkbox.pack(anchor=tk.W)
+        
+        self.delete_iso_var = tk.BooleanVar(value=True)
+        self.delete_iso_checkbox = tk.Checkbutton(add_frame, text="Delete ISO after adding", 
+                      variable=self.delete_iso_var, font=("Arial", 9))
+        self.delete_iso_checkbox.pack(anchor=tk.W)
+        
+        self.verify_var = tk.BooleanVar(value=False)
+        tk.Checkbutton(add_frame, text="Verify download (checksum)", 
+                      variable=self.verify_var, font=("Arial", 9)).pack(anchor=tk.W)
+        
         # List version and refresh
         list_info_frame = tk.Frame(add_frame)
         list_info_frame.pack(fill=tk.X, pady=(5, 0))
@@ -267,8 +289,12 @@ class Flashix:
             self.version_var.set("")
             self.version_combo.config(state=tk.DISABLED)
             
-            # Gray out delete checkbox if in single-boot mode
-            if not self.multiboot_mode:
+            # Disable torrent for custom ISO
+            self.use_torrent_var.set(False)
+            self.use_torrent_checkbox.config(state=tk.DISABLED)
+            
+            # Gray out delete checkbox for custom ISO
+            if self.multiboot_mode or not self.multiboot_mode:
                 self.delete_iso_var.set(False)
                 self.delete_iso_checkbox.config(state=tk.DISABLED)
             
@@ -289,14 +315,16 @@ class Flashix:
         
         # Reset custom ISO path and enable checkbox
         self.custom_iso_path = None
-        if not self.multiboot_mode:
-            self.delete_iso_checkbox.config(state=tk.NORMAL)
+        self.delete_iso_checkbox.config(state=tk.NORMAL)
         
         # Check if it's a cached ISO
         if category in self.reusable_isos:
             self.version_combo['values'] = []
             self.version_var.set("")
             self.version_combo.config(state=tk.DISABLED)
+            # Disable torrent for cached ISO
+            self.use_torrent_var.set(False)
+            self.use_torrent_checkbox.config(state=tk.DISABLED)
             return
         
         # Normal category from XML
@@ -306,9 +334,27 @@ class Flashix:
             self.version_combo.config(state="readonly")
             if versions:
                 self.version_combo.current(0)
+                # Check if first version has magnet link
+                self.update_torrent_checkbox_state(category, versions[0])
         else:
             self.version_combo['values'] = []
             self.version_combo.config(state="readonly")
+            self.use_torrent_var.set(False)
+            self.use_torrent_checkbox.config(state=tk.DISABLED)
+    
+    def update_torrent_checkbox_state(self, category, version):
+        """Enable/disable torrent checkbox based on magnet availability"""
+        key = (category, version)
+        os_info = self.os_details.get(key)
+        
+        if os_info and os_info.get('magnet'):
+            # Magnet available - enable checkbox
+            self.use_torrent_checkbox.config(state=tk.NORMAL)
+            self.use_torrent_var.set(True)
+        else:
+            # No magnet - disable checkbox
+            self.use_torrent_checkbox.config(state=tk.DISABLED)
+            self.use_torrent_var.set(False)
         
     def detect_drives(self):
         try:
@@ -421,6 +467,7 @@ class Flashix:
                         key = (category_name, version_name)
                         details[key] = {
                             'url': os_elem.find('url').text,
+                            'magnet': os_elem.find('magnet').text if os_elem.find('magnet') is not None else None,
                             'checksum': os_elem.find('checksum').text if os_elem.find('checksum') is not None else None,
                             'checksum_type': os_elem.find('checksum_type').text if os_elem.find('checksum_type') is not None else 'sha256'
                         }
@@ -707,6 +754,8 @@ class Flashix:
             if iso_source:
                 # Custom or cached ISO
                 iso_path = iso_source
+                use_torrent = False
+                os_info = None
             else:
                 # Download from XML
                 version = self.version_var.get()
@@ -718,6 +767,9 @@ class Flashix:
                 
                 iso_filename = os_info['url'].split('/')[-1]
                 iso_path = str(self.download_path / iso_filename)
+                
+                # Check if we should use torrent based on checkbox
+                use_torrent = self.use_torrent_var.get() and os_info.get('magnet') is not None
             
             # Create entry name (sanitized)
             entry_name = display_name.lower().replace(' ', '-').replace('.', '-')
@@ -731,9 +783,41 @@ class Flashix:
                 
                 # Download if needed
                 if not iso_source:
-                    f.write(f'echo "Downloading {display_name}..."\n')
-                    f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
-                    f.write('echo "Download complete"\n\n')
+                    if use_torrent:
+                        # Use Python torrent download
+                        self.log(f"Downloading {display_name} via torrent...")
+                        success = self.download_via_torrent(os_info['magnet'], iso_path)
+                        if not success:
+                            self.log("Torrent download failed, falling back to direct download...")
+                            f.write(f'echo "Downloading {display_name} (direct download fallback)..."\n')
+                            f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
+                            f.write('echo "Download complete"\n\n')
+                    else:
+                        f.write(f'echo "Downloading {display_name}..."\n')
+                        f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
+                        f.write('echo "Download complete"\n\n')
+                    
+                    # Checksum verification if needed
+                    if self.verify_var.get() and os_info.get('checksum'):
+                        f.write(f'echo "Verifying checksum..."\n')
+                        checksum_type = os_info['checksum_type']
+                        expected = os_info['checksum']
+                        
+                        if checksum_type == 'sha256':
+                            hash_cmd = 'shasum -a 256' if self.os_type == 'Darwin' else 'sha256sum'
+                        elif checksum_type == 'sha1':
+                            hash_cmd = 'shasum -a 1' if self.os_type == 'Darwin' else 'sha1sum'
+                        elif checksum_type == 'md5':
+                            hash_cmd = 'md5' if self.os_type == 'Darwin' else 'md5sum'
+                        else:
+                            hash_cmd = f'{checksum_type}sum'
+                        
+                        f.write(f'CHECKSUM=$({hash_cmd} "{iso_path}" | awk \'{{print $1}}\')\n')
+                        f.write(f'if [ "$CHECKSUM" != "{expected}" ]; then\n')
+                        f.write(f'    echo "Checksum mismatch!"\n')
+                        f.write(f'    exit 1\n')
+                        f.write(f'fi\n')
+                        f.write('echo "Checksum verified"\n\n')
                 
                 # Mount partitions
                 if self.os_type == 'Darwin':
@@ -778,6 +862,11 @@ class Flashix:
                 f.write('echo "Unmounting..."\n')
                 f.write('umount /tmp/flashix_esp\n')
                 f.write('umount /tmp/flashix_data\n\n')
+                
+                # Delete ISO if requested
+                if not iso_source and self.delete_iso_var.get():
+                    f.write('echo "Cleaning up ISO..."\n')
+                    f.write(f'rm -f "{iso_path}"\n\n')
                 
                 f.write('echo "Complete!"\n')
             
@@ -886,6 +975,7 @@ class Flashix:
                 iso_path = iso_source
                 os_info = None
                 version = None
+                use_torrent = False
             else:
                 # Download from XML
                 version = self.version_var.get()
@@ -897,6 +987,9 @@ class Flashix:
                 
                 iso_filename = os_info['url'].split('/')[-1]
                 iso_path = self.download_path / iso_filename
+                
+                # Check if we should use torrent
+                use_torrent = self.use_torrent_var.get() and os_info.get('magnet') is not None
             
             # Create complete script
             self.log("Preparing flash script...")
@@ -908,9 +1001,19 @@ class Flashix:
                 
                 # Download if needed
                 if not iso_source:
-                    f.write(f'echo "Downloading {category} - {version}..."\n')
-                    f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
-                    f.write('echo "Download complete"\n\n')
+                    if use_torrent:
+                        # Use Python torrent download
+                        self.log(f"Downloading {category} - {version} via torrent...")
+                        success = self.download_via_torrent(os_info['magnet'], str(iso_path))
+                        if not success:
+                            self.log("Torrent download failed, falling back to direct download...")
+                            f.write(f'echo "Downloading {category} - {version} (direct download fallback)..."\n')
+                            f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
+                            f.write('echo "Download complete"\n\n')
+                    else:
+                        f.write(f'echo "Downloading {category} - {version}..."\n')
+                        f.write(f'curl -L -o "{iso_path}" "{os_info["url"]}"\n')
+                        f.write('echo "Download complete"\n\n')
                     
                     # Checksum verification if needed
                     if self.verify_var.get() and os_info.get('checksum'):
@@ -1006,6 +1109,30 @@ class Flashix:
             self.is_flashing = False
             self.flash_btn.config(state=tk.NORMAL)
             self.progress_bar.stop()
+    
+    def download_via_torrent(self, magnet_link, output_path):
+        """Download ISO using torrent. Returns True on success, False on failure."""
+        try:
+            import torrentp
+            
+            self.log(f"Starting torrent download...")
+            self.log(f"Magnet: {magnet_link[:80]}...")
+            
+            # Create torrent downloader
+            torrent_file = torrentp.TorrentDownloader(magnet_link, str(self.download_path))
+            
+            # Start download
+            torrent_file.start_download()
+            
+            self.log("Torrent download complete")
+            return True
+            
+        except ImportError:
+            self.log("ERROR: torrentp library not installed. Run: pip install torrentp")
+            return False
+        except Exception as e:
+            self.log(f"Torrent download error: {e}")
+            return False
 
 if __name__ == "__main__":
     # Check for --multi argument
