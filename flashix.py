@@ -10,7 +10,7 @@ import sys
 import platform
 from pathlib import Path
 
-FLASHIX_VERSION = "1.6 Kings Canyon"
+FLASHIX_VERSION = "1.6.1"
 
 class Flashix:
     def __init__(self, root, multiboot_mode=False):
@@ -607,13 +607,11 @@ class Flashix:
             
             os.chmod(script_path, 0o755)
             
-            self.log("System authentication required...")
+            self.log("Running initialization script...")
             self.log("")
             
-            if self.os_type == 'Darwin':
-                cmd = ['osascript', '-e', f'do shell script "{script_path}" with prompt "Flashix needs administrator permission to initialize multiboot drive." with administrator privileges']
-            else:
-                cmd = ['pkexec', str(script_path)]
+            # Run script directly (no sudo needed - app already runs with sudo)
+            cmd = [str(script_path)]
             
             process = subprocess.Popen(
                 cmd,
@@ -785,13 +783,11 @@ class Flashix:
             
             os.chmod(script_path, 0o755)
             
-            self.log("System authentication required...")
+            self.log("Running add ISO script...")
             self.log("")
             
-            if self.os_type == 'Darwin':
-                cmd = ['osascript', '-e', f'do shell script "{script_path}" with prompt "Flashix needs administrator permission to add ISO to multiboot drive." with administrator privileges']
-            else:
-                cmd = ['pkexec', str(script_path)]
+            # Run script directly (no sudo needed - app already runs with sudo)
+            cmd = [str(script_path)]
             
             process = subprocess.Popen(
                 cmd,
@@ -943,7 +939,8 @@ class Flashix:
                     f.write(f'echo "Unmounting {drive}..."\n')
                     f.write(f'diskutil unmountDisk {drive}\n')
                     f.write(f'echo "Flashing to {drive}..."\n')
-                    f.write(f'dd if="{iso_path}" of={drive} bs=4m conv=fsync\n')
+                    f.write(f'dd if="{iso_path}" of={drive} bs=4m\n')
+                    f.write(f'sync\n')
                 else:
                     f.write(f'echo "Flashing to {drive}..."\n')
                     f.write(f'dd if="{iso_path}" of={drive} bs=4M status=progress conv=fsync\n')
@@ -967,14 +964,11 @@ class Flashix:
             
             os.chmod(script_path, 0o755)
             
-            self.log("System authentication required...")
-            self.log("Please authenticate to begin download and flash process")
+            self.log("Running flash script...")
             self.log("")
             
-            if self.os_type == 'Darwin':
-                cmd = ['osascript', '-e', f'do shell script "{script_path}" with prompt "Flashix needs administrator permission to flash USB drives." with administrator privileges']
-            else:
-                cmd = ['pkexec', str(script_path)]
+            # Run script directly (no sudo needed - app already runs with sudo)
+            cmd = [str(script_path)]
             
             process = subprocess.Popen(
                 cmd,
