@@ -758,11 +758,14 @@ class Flashix:
                 f.write('umount /tmp/flashix_iso\n')
                 f.write('echo "Extraction complete"\n\n')
                 
-                # Find EFI file
+                # Find EFI file - prioritize grubx64.efi and bootx64.efi
                 f.write('echo "Creating boot entry..."\n')
-                f.write(f'EFI_FILE=$(find /tmp/flashix_data/Extracted/{entry_name} -name "grubx64.efi" -o -name "bootx64.efi" | head -1)\n')
+                f.write(f'EFI_FILE=$(find /tmp/flashix_data/Extracted/{entry_name} -name "grubx64.efi" | head -1)\n')
                 f.write(f'if [ -z "$EFI_FILE" ]; then\n')
-                f.write(f'    EFI_FILE=$(find /tmp/flashix_data/Extracted/{entry_name} -name "*.efi" | head -1)\n')
+                f.write(f'    EFI_FILE=$(find /tmp/flashix_data/Extracted/{entry_name} -name "bootx64.efi" | head -1)\n')
+                f.write(f'fi\n')
+                f.write(f'if [ -z "$EFI_FILE" ]; then\n')
+                f.write(f'    EFI_FILE=$(find /tmp/flashix_data/Extracted/{entry_name} -type f -name "*.efi" | head -1)\n')
                 f.write(f'fi\n')
                 f.write(f'EFI_PATH=$(echo $EFI_FILE | sed "s|/tmp/flashix_data/Extracted/{entry_name}||")\n\n')
                 
