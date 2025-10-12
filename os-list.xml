@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.6 Kings Canyon">
+<oslist version="1.7 Dallas">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
@@ -17,6 +17,86 @@
             <version>Questing Quokka - 25.10 Interim AMD64</version>
             <url>https://releases.ubuntu.com/questing/ubuntu-25.10-desktop-amd64.iso</url>
             <checksum>32e30d72ae4798c633323a2684d94a11582bb03a6ab38d2b0d5ae5eabc5e577b</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Ubuntu Server Install Image">
+        <os>
+            <version>Noble Numbat - 24.04.3 LTS AMD64</version>
+            <url>https://releases.ubuntu.com/noble/ubuntu-24.04.3-live-server-amd64.iso</url>
+            <checksum>c3514bf0056180d09376462a7a1b4f213c1d6e8ea67fae5c25099c6fd3d8274b</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Plucky Puffin - 25.04 Interim AMD64</version>
+            <url>https://releases.ubuntu.com/plucky/ubuntu-25.04-live-server-amd64.iso</url>
+            <checksum>8b44046211118639c673335a80359f4b3f0d9e52c33fe61c59072b1b61bdecc5</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Questing Quokka - 25.10 Interim AMD64</version>
+            <url>https://releases.ubuntu.com/questing/ubuntu-25.10-live-server-amd64.iso</url>
+            <checksum>dc54870e5261c0abad19f74b8146659d10e625971792bd42d7ecde820b60a1d0</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Kubuntu">
+        <os>
+            <version>Noble Numbat - 24.04.3 LTS AMD64</version>
+            <url>https://cdimage.ubuntu.com/kubuntu/releases/noble/release/kubuntu-24.04.3-desktop-amd64.iso</url>
+            <checksum>8c69dd380e5a8969b77ca1708da59f0b9a50d0c151f0a65917180585697dd1e6</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Plucky Puffin - 25.04 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/kubuntu/releases/plucky/release/kubuntu-25.04-desktop-amd64.iso</url>
+            <checksum>701f1fd796ed6d5867f54af0e2dceac7b7f01a9f975fda3423e9d0e97da10ba8</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Questing Quokka - 25.10 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/kubuntu/releases/questing/release/kubuntu-25.10-desktop-amd64.iso</url>
+            <checksum>77cade4b5b6c85f0d7f163c7113b9207d58aec82e8247b7bfab7c37eafcf5963</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Xubuntu">
+        <os>
+            <version>Noble Numbat - 24.04.3 LTS AMD64</version>
+            <url>https://cdimage.ubuntu.com/xubuntu/releases/noble/release/xubuntu-24.04.3-desktop-amd64.iso</url>
+            <checksum>b61e083d8a5ab003bad6ef7ea31ec21d7bfdf19b99d75987ab3fa3bbe85ec1bf</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Plucky Puffin - 25.04 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/xubuntu/releases/plucky/release/xubuntu-25.04-desktop-amd64.iso</url>
+            <checksum>c31de06ea12843a72190f5277f95378b6d921e9c1bb69b1888c6d15c8937a98a</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Questing Quokka - 25.10 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/xubuntu/releases/questing/release/xubuntu-25.10-desktop-amd64.iso</url>
+            <checksum>f6a82db0a34731fd64f4a0ed15b653ab531b058a988830d164b1a0d1c00ba0a6</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
+    <category name="Ubuntu Budgie">
+        <os>
+            <version>Noble Numbat - 24.04.3 LTS AMD64</version>
+            <url>https://cdimage.ubuntu.com/ubuntu-budgie/releases/noble/release/ubuntu-budgie-24.04.3-desktop-amd64.iso</url>
+            <checksum>7acb4d56ea3edd79d6e8023d5bdcdf2bd04e11180e3a47f5355218e3bd11198d</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Plucky Puffin - 25.04 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/ubuntu-budgie/releases/plucky/release/ubuntu-budgie-25.04-desktop-amd64.iso</url>
+            <checksum>dcc74c1c9b9bf00abab35385c21ec5a207f68eb59ef57689c13d591b945f7962</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Questing Quokka - 25.10 Interim AMD64</version>
+            <url>https://cdimage.ubuntu.com/ubuntu-budgie/releases/questing/release/ubuntu-budgie-25.10-desktop-amd64.iso</url>
+            <checksum>4163b6ee85d4fabdb0569686a4a4d079406d43335c14c8931523dfb9a7c89c93</checksum>
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
