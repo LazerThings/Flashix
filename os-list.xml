@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.7 Dallas">
+<oslist version="1.8 Rio Grande">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
@@ -102,6 +102,20 @@
     </category>
     <category name="Fedora KDE Plasma">
         <os>
+            <version>43 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/KDE/x86_64/iso/Fedora-KDE-Desktop-Live-43-1.6.x86_64.iso</url>
+            <magnet>magnet:?xt=urn:btih:3290eb9c2c0884baf0afefbf052eaa9f33d7c828&dn=Fedora-KDE-Desktop-Live-x86_64-43&tr=http%3A%2F%2Ftorrent.fedoraproject.org%3A6969%2Fannounce</magnet>
+            <checksum>181fe3e265fb5850c929f5afb7bdca91bb433b570ef39ece4a7076187435fdab</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>43 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/KDE/aarch64/iso/Fedora-KDE-Desktop-Live-43-1.6.aarch64.iso</url>
+            <magnet>magnet:?xt=urn:btih:049c9e7e896e119ba0ec1ebd380cc44f18f9544b&dn=Fedora-KDE-Desktop-Live-aarch64-43&tr=http%3A%2F%2Ftorrent.fedoraproject.org%3A6969%2Fannounce</magnet>
+            <checksum>884c651b543a0a2922074859da5e7720595b6a113c3ee1a51fd996a1a0492218</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
             <version>42 AMD64</version>
             <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/KDE/x86_64/iso/Fedora-KDE-Desktop-Live-42-1.1.x86_64.iso</url>
             <checksum>cf4beecc21ffae86d0e368797cbcc02ba7f4c6549c626db01b1d3f4e1444da85</checksum>
@@ -114,7 +128,47 @@
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
+    <category name="Fedora Everything (Online)">
+        <os>
+            <version>43 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/Everything/x86_64/iso/Fedora-Everything-netinst-x86_64-43-1.6.iso</url>
+            <checksum>f4d06a40ce4fb4a84705e1a1f01ca1328f95a2120d422ba5f719af5df62d0099</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>43 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/Everything/aarch64/iso/Fedora-Everything-netinst-aarch64-43-1.6.iso</url>
+            <checksum>169aa239a72029cf640bbbb3782673ba5ddfed002de4d84a0ab878feb1bdba9e</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>43 PPC64le</version>
+            <url>https://download.fedoraproject.org/pub/fedora-secondary/releases/43/Everything/ppc64le/iso/Fedora-Everything-netinst-ppc64le-43-1.6.iso</url>
+            <checksum>e2080f1bd227e41b3aa186a86c891c7e7a4c535167289affa47f28dbd982ed5c</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>43 s390x</version>
+            <url>https://download.fedoraproject.org/pub/fedora-secondary/releases/43/Everything/s390x/iso/Fedora-Everything-netinst-s390x-43-1.6.iso</url>
+            <checksum>c2c4aa409e5ca4ddca07fc4d1f7efa030e73ace705e4464c55b4cf8fd287af24</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
     <category name="Fedora Kinoite">
+        <os>
+            <version>43 AMD64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/Kinoite/x86_64/iso/Fedora-Kinoite-ostree-x86_64-43-1.6.iso</url>
+            <magnet>magnet:?xt=urn:btih:9956bf3aff51b9dee1ed38c6226fa846271601c8&dn=Fedora-Kinoite-ostree-x86_64-43&tr=http%3A%2F%2Ftorrent.fedoraproject.org%3A6969%2Fannounce</magnet>
+            <checksum>7c792ab7ab4a184d0d560cf5c2fc3480cdcadbb69f2b8a1d0999447a8f8062b6</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>43 ARM64</version>
+            <url>https://download.fedoraproject.org/pub/fedora/linux/releases/43/Kinoite/aarch64/iso/Fedora-Kinoite-ostree-aarch64-43-1.6.iso</url>
+            <magnet>magnet:?xt=urn:btih:5484a8470e7dde380fc8b29ce783dfaf80375099&dn=Fedora-Kinoite-ostree-aarch64-43&tr=http%3A%2F%2Ftorrent.fedoraproject.org%3A6969%2Fannounce</magnet>
+            <checksum>a1ee65afe262c1502eb6b8f4986256e2e543c8ebbae4d2cb14c33e47f4dc26aa</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
         <os>
             <version>42 AMD64</version>
             <url>https://download.fedoraproject.org/pub/fedora/linux/releases/42/Kinoite/x86_64/iso/Fedora-Kinoite-ostree-x86_64-42-1.1.iso</url>
