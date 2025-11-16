@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslist version="1.9.1 Wyvern">
+<oslist version="1.9.2 Wyvern">
     <category name="Ubuntu Desktop">
         <os>
             <version>Noble Numbat - 24.04.3 LTS AMD64</version>
@@ -252,7 +252,20 @@
     </category>
     <category name="openSUSE">
         <os>
-            <version>Agama 18.0.0 AMD64</version>
+            <version>Leap 16.0 Online AMD64</version>
+            <url>https://download.opensuse.org/distribution/leap/16.0/offline/Leap-16.0-online-installer-x86_64.install.iso</url>
+            <checksum>e338e26822b8ba75a0915bed886fd68892158376bccf4a2a5d4d54a138b5514e</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Tumbleweed Current Online AMD64</version>
+            <url>https://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-NET-x86_64-Current.iso</url>
+            <magnet>magnet:?xt=urn:btih:5d712c37a9a0aad9ae7e32da9ce91b1d3f599a0f&amp;dn=Leap-16.0-online-installer-x86_64-Build171.1.install.iso&amp;tr=http%3A%2F%2Ftracker.opensuse.org%3A6969%2Fannounce</magnet>
+            <checksum>87d40549515d34cb6baaae2ea57b6547091d50626da1c0fad50fecdfe62a7c07</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+        <os>
+            <version>Agama 18.0.0 AMD64 - Doesn't Work As Of 11/15/25</version>
             <url>https://download.opensuse.org/repositories/systemsmanagement:/Agama:/Devel/images/iso/agama-installer.x86_64-18.0.0-openSUSE-Build1.5.iso</url>
             <checksum>103a305f9672396ecb2f01acdabfeb39196cffd70d12e348e327335314c94461</checksum>
             <checksum_type>sha256</checksum_type>
