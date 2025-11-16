@@ -250,4 +250,12 @@
             <checksum_type>sha256</checksum_type>
         </os>
     </category>
+    <category name="openSUSE">
+        <os>
+            <version>Agama 18.0.0 AMD64</version>
+            <url>https://download.opensuse.org/repositories/systemsmanagement:/Agama:/Devel/images/iso/agama-installer.x86_64-18.0.0-openSUSE-Build1.5.iso</url>
+            <checksum>103a305f9672396ecb2f01acdabfeb39196cffd70d12e348e327335314c94461</checksum>
+            <checksum_type>sha256</checksum_type>
+        </os>
+    </category>
 </oslist>
